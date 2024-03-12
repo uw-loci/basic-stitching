@@ -255,7 +255,10 @@ class TileConfigurationTxtStrategy implements StitchingStrategy {
             logger.info("Skipping folder as TileConfiguration.txt is missing: $dir")
             return []
         }
-        def tileConfig = parseTileConfiguration(tileConfigPath.toString())
+
+        //def tileConfig = parseTileConfiguration(tileConfigPath.toString())
+        def tileConfig = parseTileConfiguration(tileConfigPath.toString(), pixelSizeInMicrons, baseDownsample )
+        //TODO pass pixel size and base downsample
 
         logger.info('completed parseTileConfiguration')
 
@@ -297,7 +300,24 @@ class TileConfigurationTxtStrategy implements StitchingStrategy {
      * @param filePath The path to the 'TileConfiguration.txt' file.
      * @return A list of maps, each containing the image name and its coordinates (x, y).
      */
-    static def parseTileConfiguration(String filePath) {
+//    static def parseTileConfiguration(String filePath) {
+//        def lines = Files.readAllLines(Paths.get(filePath))
+//        def imageCoordinates = []
+//
+//        lines.each { line ->
+//            if (!line.startsWith("#") && !line.trim().isEmpty()) {
+//                def parts = line.split(";")
+//                if (parts.length >= 3) {
+//                    def imageName = parts[0].trim()
+//                    def coordinates = parts[2].trim().replaceAll("[()]", "").split(",")
+//                    imageCoordinates << [imageName: imageName, x: Double.parseDouble(coordinates[0]), y: Double.parseDouble(coordinates[1])]
+//                }
+//            }
+//        }
+//
+//        return imageCoordinates
+//    }
+    static def parseTileConfiguration(String filePath, double pixelSizeInMicrons, double baseDownsample) {
         def lines = Files.readAllLines(Paths.get(filePath))
         def imageCoordinates = []
 
@@ -307,13 +327,20 @@ class TileConfigurationTxtStrategy implements StitchingStrategy {
                 if (parts.length >= 3) {
                     def imageName = parts[0].trim()
                     def coordinates = parts[2].trim().replaceAll("[()]", "").split(",")
-                    imageCoordinates << [imageName: imageName, x: Double.parseDouble(coordinates[0]), y: Double.parseDouble(coordinates[1])]
+                    double x = Double.parseDouble(coordinates[0])
+                    double y = Double.parseDouble(coordinates[1])
+                    if (pixelSizeInMicrons != 0 && baseDownsample != 0) {
+                        x /= (pixelSizeInMicrons * baseDownsample)
+                        y /= (pixelSizeInMicrons * baseDownsample)
+                    }
+                    imageCoordinates << [imageName: imageName, x: x, y: y]
                 }
             }
         }
 
         return imageCoordinates
     }
+
     /**
      * Parse an ImageRegion from the TileConfiguration.txt data and TIFF file dimensions.
      * @param imageName Name of the image file for which to get the region.
