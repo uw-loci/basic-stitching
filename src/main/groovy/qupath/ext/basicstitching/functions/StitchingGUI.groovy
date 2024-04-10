@@ -12,6 +12,7 @@ import javafx.stage.Modality
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import qupath.ext.basicstitching.stitching.StitchingImplementations
+import qupath.ext.basicstitching.utilities.AutoFillPersistentPreferences
 import qupath.lib.gui.scripting.QPEx
 
 import java.awt.*
@@ -21,11 +22,11 @@ import static qupath.ext.basicstitching.utilities.UtilityFunctions.getCompressio
 class StitchingGUI {
 
     private static final Logger logger = LoggerFactory.getLogger(StitchingGUI.class);
-    static TextField folderField = new TextField();
+    static TextField folderField = new TextField(AutoFillPersistentPreferences.getFolderLocationSaved());
     static ComboBox<String> compressionBox = new ComboBox<>();
-    static TextField pixelSizeField = new TextField("0.4988466");
-    static TextField downsampleField = new TextField("1");
-    static TextField matchStringField = new TextField("20x");
+    static TextField pixelSizeField = new TextField(AutoFillPersistentPreferences.getImagePixelSizeInMicronsSaved());
+    static TextField downsampleField = new TextField(AutoFillPersistentPreferences.getDownsampleSaved());
+    static TextField matchStringField = new TextField(AutoFillPersistentPreferences.getSearchStringSaved());
     static ComboBox<String> stitchingGridBox = new ComboBox<>(); // New combo box for stitching grid options
     static Button folderButton = new Button("Select Folder");
     // Declare labels as static fields
@@ -59,17 +60,23 @@ class StitchingGUI {
 
         // Handling the response
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            //read values from dialog and
+            // save to persistent preferences so they will be saved for the next use
             String folderPath = folderField.getText() // Assuming folderField is accessible
+            AutoFillPersistentPreferences.setFolderLocationSaved(folderPath)
             String compressionType = compressionBox.getValue() // Assuming compressionBox is accessible
-
+            AutoFillPersistentPreferences.setCompressionTypeSaved(compressionType)
             // Check if pixelSizeField and downsampleField are not empty
             double pixelSize = pixelSizeField.getText() ? Double.parseDouble(pixelSizeField.getText()) : 0
+            AutoFillPersistentPreferences.setImagePixelSizeInMicronsSaved(pixelSize.toString())
             // Default to 0 if empty
             double downsample = downsampleField.getText() ? Double.parseDouble(downsampleField.getText()) : 1
             // Default to 1 if empty
-
+            AutoFillPersistentPreferences.setDownsampleSaved(downsample.toString())
             String matchingString = matchStringField.getText() // Assuming matchStringField is accessible
+            AutoFillPersistentPreferences.setSearchStringSaved(matchingString)
             String stitchingType = stitchingGridBox.getValue()
+            AutoFillPersistentPreferences.setStitchingMethodSaved(stitchingType)
             // Call the function with collected data
             String finalImageName = StitchingImplementations.stitchCore(stitchingType, folderPath, folderPath, compressionType, pixelSize, downsample, matchingString)
             //stitchByFileName(folderPath, compressionType, pixelSize, downsample, matchingString)
@@ -217,7 +224,7 @@ class StitchingGUI {
         );
 
         // Set the default value for the combo box
-        stitchingGridBox.setValue("Coordinates in TileConfiguration.txt file");
+        stitchingGridBox.setValue(AutoFillPersistentPreferences.getStitchingMethodSaved());
 
         // Define an action to be performed when a new item is selected in the combo box
         // This action updates the visibility of other components based on the selection
@@ -306,7 +313,7 @@ class StitchingGUI {
         compressionBox.getItems().addAll(compressionTypes);
 
         // Set the default value for the combo box
-        compressionBox.setValue("J2K_LOSSY");
+        compressionBox.setValue(AutoFillPersistentPreferences.getCompressionTypeSaved());
 
         // Create and set a tooltip for additional information
         Tooltip compressionTooltip = new Tooltip("Select the type of image compression.");
