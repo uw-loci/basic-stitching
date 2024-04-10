@@ -408,5 +408,17 @@ class StitchingGUI {
         }
     }
 
+    static void showAlertDialog(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING)
+        alert.setTitle("Warning!")
+        alert.setHeaderText(null)
+        alert.setContentText(message)
+
+        // This line makes the alert a modal dialog
+        alert.initModality(Modality.APPLICATION_MODAL)
+
+        alert.showAndWait()
+    }
+
 
 }

@@ -1,10 +1,10 @@
 package qupath.ext.basicstitching.stitching
 
 import org.slf4j.LoggerFactory
+import qupath.ext.basicstitching.functions.StitchingGUI
 import qupath.ext.basicstitching.utilities.UtilityFunctions
 import qupath.lib.common.GeneralTools
 import qupath.lib.gui.QuPathGUI
-import qupath.lib.gui.dialogs.Dialogs
 import qupath.lib.images.servers.ImageServerProvider
 import qupath.lib.images.servers.ImageServers
 import qupath.lib.images.servers.SparseImageServer
@@ -598,7 +598,7 @@ class StitchingImplementations {
                 setStitchingStrategy(new TileConfigurationTxtStrategy())
                 break
             default:
-                Dialogs.showWarningNotification("Warning", "Error with choosing a stitching method, code here should not be reached in StitchingImplementations.groovy")
+                StitchingGUI.showAlertDialog("Error with choosing a stitching method, code here should not be reached in StitchingImplementations.groovy")
                 return // Safely exit the method if the stitching type is not recognized
         }
 
@@ -611,7 +611,7 @@ class StitchingImplementations {
 
             // Check if valid file-region pairs were obtained
             if (fileRegionPairs == null || fileRegionPairs.isEmpty()) {
-                Dialogs.showWarningNotification("Warning", "No valid folders found matching the criteria.")
+                StitchingGUI.showAlertDialog("No valid folders found matching the criteria.")
                 return // Exit the method if no valid file-region pairs are found
             }
 
