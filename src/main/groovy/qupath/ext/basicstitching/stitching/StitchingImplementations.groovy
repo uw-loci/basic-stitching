@@ -5,6 +5,7 @@ import qupath.ext.basicstitching.functions.StitchingGUI
 import qupath.ext.basicstitching.utilities.UtilityFunctions
 import qupath.lib.common.GeneralTools
 import qupath.lib.gui.QuPathGUI
+import qupath.lib.images.servers.ImageServerMetadata
 import qupath.lib.images.servers.ImageServerProvider
 import qupath.lib.images.servers.ImageServers
 import qupath.lib.images.servers.SparseImageServer
@@ -582,7 +583,7 @@ class StitchingImplementations {
      */
     static String stitchCore(String stitchingType, String folderPath, String outputPath,
                              String compressionType, double pixelSizeInMicrons,
-                             double baseDownsample, String matchingString) {
+                             double baseDownsample, String matchingString, double zSpacingMicrons = 0) {
         def logger = LoggerFactory.getLogger(QuPathGUI.class)
         // Determine the stitching strategy based on the provided type
         logger.info("Stitching type is: $stitchingType")
@@ -643,6 +644,11 @@ class StitchingImplementations {
 
             // Build and pyramidalize the server for the final stitched image
             def server = builder.build()
+            var metadataNew = new ImageServerMetadata.Builder(server.getMetadata())
+                    .pixelSizeMicrons(pixelSizeInMicrons, pixelSizeInMicrons)
+                    .zSpacingMicrons(zSpacingMicrons)
+                    .build();
+            server.setMetadata(metadataNew)
             server = ImageServers.pyramidalize(server)
 
             // Write the final stitched image
@@ -663,7 +669,7 @@ class StitchingImplementations {
                     .compression(compression)
                     .scaledDownsampling(baseDownsample, 4)
                     .build()
-                    .writePyramid(pathOutput)
+                    .writeSeries(pathOutput)
 
             long endTime = System.currentTimeMillis()
             logger.info("Image written to ${pathOutput} in ${GeneralTools.formatNumber((endTime - startTime) / 1000.0, 1)} s")
