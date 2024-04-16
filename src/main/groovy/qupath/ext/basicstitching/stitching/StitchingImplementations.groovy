@@ -583,7 +583,7 @@ class StitchingImplementations {
      */
     static String stitchCore(String stitchingType, String folderPath, String outputPath,
                              String compressionType, double pixelSizeInMicrons,
-                             double baseDownsample, String matchingString, double zSpacingMicrons = 0) {
+                             double baseDownsample, String matchingString, double zSpacingMicrons = 1) {
         def logger = LoggerFactory.getLogger(QuPathGUI.class)
         // Determine the stitching strategy based on the provided type
         logger.info("Stitching type is: $stitchingType")
