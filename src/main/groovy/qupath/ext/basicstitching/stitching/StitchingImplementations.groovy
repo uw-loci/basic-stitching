@@ -11,7 +11,7 @@ import qupath.lib.images.servers.ImageServers
 import qupath.lib.images.servers.SparseImageServer
 import qupath.lib.images.writers.ome.OMEPyramidWriter
 import qupath.lib.regions.ImageRegion
-
+import qupath.fx.dialogs.Dialogs
 import javax.imageio.ImageIO
 import javax.imageio.plugins.tiff.BaselineTIFFTagSet
 import javax.imageio.plugins.tiff.TIFFDirectory
