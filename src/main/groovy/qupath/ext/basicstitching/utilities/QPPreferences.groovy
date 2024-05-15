@@ -57,7 +57,7 @@ class AutoFillPersistentPreferences{
         this.compressionTypeSaved.value = compressionTypeSaved
     }
 
-    private static StringProperty stitchingMethodSaved = PathPrefs.createPersistentPreference("compressionType","Coordinates in TileConfiguration.txt file")
+    private static StringProperty stitchingMethodSaved = PathPrefs.createPersistentPreference("stitchingMethod","Coordinates in TileConfiguration.txt file")
 
     public static String getStitchingMethodSaved(){
         return stitchingMethodSaved.value
