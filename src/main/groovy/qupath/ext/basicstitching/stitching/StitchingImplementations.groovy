@@ -283,10 +283,10 @@ class TileConfigurationTxtStrategy implements StitchingStrategy {
         // Create file-region mappings for each file
         List<Map> fileRegionMaps = []
         files.each { File file ->
-            logger.info("parsing region from file $file")
+            //logger.info("parsing region from file $file")
             ImageRegion region = parseRegionFromTileConfig(file as File, tileConfig as List<Map>)
             if (region) {
-                logger.info("Processing file: ${file.path}")
+                //logger.info("Processing file: ${file.path}")
                 fileRegionMaps << [file: file, region: region, subdirName: dir.getFileName().toString()]
             }
         }
